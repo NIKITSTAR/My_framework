@@ -1,13 +1,24 @@
-import pytest
-import os
+from pytest import fixture
+from os import remove
 
 
-@pytest.fixture
-def delete_vaild_emails_file():
-    """Фикстура для создания пустого файла 'valid_emails.txt' перед выполнением теста и его удаления после теста. yield: Путь к созданному файлу."""
+@fixture
+def delete_valid_emails_file():
+    """Фикстура для очистки 'valid_emails.txt' перед тестами и удаления после тестов.
+
+    Returns:
+        str: Путь к созданному файлу.
+    """
     file_path = 'valid_emails.txt'
-    open(file_path, 'w').close()
-    yield file_path
-    
-    if os.path.exists(file_path):
-        os.remove(file_path)
+
+    # Создаём пустой файл или очищаем, если уже существует
+    with open(file_path, 'w', encoding='utf-8') as file:
+        pass
+
+    yield file_path  # Передаём путь к файлу в тест
+
+    # Удаляем файл после завершения теста
+    try:
+        remove(file_path)
+    except FileNotFoundError:
+        pass
